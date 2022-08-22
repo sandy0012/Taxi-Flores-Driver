@@ -26,6 +26,9 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.uns.taxifloresdriver.R
 import com.uns.taxifloresdriver.databinding.ActivityMapBinding
+import com.uns.taxifloresdriver.providers.AuthProvider
+import com.uns.taxifloresdriver.providers.GeoProvider
+
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
 
@@ -34,6 +37,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
     private var easyWayLocation: EasyWayLocation? = null
     private var myLocationLatLng: LatLng? = null
     private var markerDriver: Marker? = null
+    private val geoProvider= GeoProvider()
+    private val authProvider= AuthProvider()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,10 +76,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
                 permission.getOrDefault(android.Manifest.permission.ACCESS_FINE_LOCATION, false)->{
                     Log.d("LOCALIZACION","Permiso Concedido")
                     //easyWayLocation?.startLocation();
+                    checkIfDriverIsConnected()
                 }
                 permission.getOrDefault(android.Manifest.permission.ACCESS_COARSE_LOCATION, false)->{
                     Log.d("LOCALIZACION","Permiso Concedido con Limitación")
                     //easyWayLocation?.startLocation();
+                    checkIfDriverIsConnected()
                 }
                 else ->{
                     Log.d("LOCALIZACION","Permiso no Concedido")
@@ -84,9 +91,35 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
     }
 
 
+    private fun checkIfDriverIsConnected(){
+        geoProvider.getLocation(authProvider.getId()).addOnSuccessListener {
+            document ->
+            if(document.exists()){
+                if(document.contains("l")){
+                    connectDriver()
+                }
+                else{
+                    showButtonConnect()
+                }
+            }
+            else{
+                showButtonConnect()
+            }
+        }
+    }
+
+
+    private fun saveLocation(){
+        if(myLocationLatLng != null){
+            geoProvider.saveLocation(authProvider.getId(),myLocationLatLng!!)
+        }
+    }
+
+
     private fun disconnectDriver(){
         easyWayLocation?.endUpdates()
         if(myLocationLatLng != null){
+            geoProvider.removeLocation(authProvider.getId())
             showButtonConnect()
         }
     }
@@ -204,6 +237,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
         ))
 
         addMarker()
+        saveLocation()
     }
 
     override fun locationCancelled() {
