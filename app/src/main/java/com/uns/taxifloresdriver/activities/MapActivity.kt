@@ -210,8 +210,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
         }
         googleMap?.isMyLocationEnabled = false
 
-
-
         try {
             val success = googleMap?.setMapStyle(
                 MapStyleOptions.loadRawResourceStyle(this, R.raw.style)
