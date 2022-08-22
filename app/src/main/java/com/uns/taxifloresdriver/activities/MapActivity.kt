@@ -4,13 +4,13 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -59,6 +59,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
             android.Manifest.permission.ACCESS_COARSE_LOCATION
         ))
 
+        binding.bntConnect.setOnClickListener{ connectDriver() }
+        binding.bntDisconnect.setOnClickListener{ disconnectDriver() }
+
     }
 
     val locationPermissions =registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){
@@ -67,11 +70,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
             when{
                 permission.getOrDefault(android.Manifest.permission.ACCESS_FINE_LOCATION, false)->{
                     Log.d("LOCALIZACION","Permiso Concedido")
-                    easyWayLocation?.startLocation();
+                    //easyWayLocation?.startLocation();
                 }
                 permission.getOrDefault(android.Manifest.permission.ACCESS_COARSE_LOCATION, false)->{
                     Log.d("LOCALIZACION","Permiso Concedido con Limitación")
-                    easyWayLocation?.startLocation();
+                    //easyWayLocation?.startLocation();
                 }
                 else ->{
                     Log.d("LOCALIZACION","Permiso no Concedido")
@@ -80,6 +83,34 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
         }
     }
 
+
+    private fun disconnectDriver(){
+        easyWayLocation?.endUpdates()
+        if(myLocationLatLng != null){
+            showButtonConnect()
+        }
+    }
+
+    private fun connectDriver(){
+        easyWayLocation?.endUpdates()
+        easyWayLocation?.startLocation()
+        showButtonDisconnect()
+
+    }
+
+    /**
+     * ocultar boton de desconectarse
+     * mostrar boton de conectarse
+     */
+    private fun showButtonConnect(){
+        binding.bntDisconnect.visibility = View.GONE
+        binding.bntConnect.visibility = View.VISIBLE
+    }
+
+    private fun showButtonDisconnect(){
+        binding.bntDisconnect.visibility = View.VISIBLE
+        binding.bntConnect.visibility = View.GONE
+    }
 
     private fun addMarker(){
         val drawable = ContextCompat.getDrawable(applicationContext,R.drawable.car)
@@ -127,7 +158,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-        easyWayLocation?.startLocation();
+        googleMap?.uiSettings?.isZoomControlsEnabled = true
+        //easyWayLocation?.startLocation();
 
         if (ActivityCompat.checkSelfPermission(
                 this,
