@@ -164,8 +164,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
     //insercion de drawable
     private fun getMarkerFromDrawable(drawable: Drawable): BitmapDescriptor{
         val canvas = Canvas()
-        val width = 65
-        val heigh = 100
+
+        val size = 1
+
+        val width = 65 * size
+        val heigh = 100 * size
 
         val bitmap = Bitmap.createBitmap(
             width,
