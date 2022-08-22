@@ -1,6 +1,7 @@
 package com.uns.taxifloresdriver.activities
 
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
@@ -123,6 +124,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
         easyWayLocation?.endUpdates();
     }
 
+
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         easyWayLocation?.startLocation();
@@ -139,6 +141,19 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
             return
         }
         googleMap?.isMyLocationEnabled = false
+
+
+
+        try {
+            val success = googleMap?.setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(this, R.raw.style)
+            )
+            if (!success!!) {
+                Log.d("MAPAS", "No se pudo encontrar el estilo")
+            }
+        } catch (e: Resources.NotFoundException) {
+            Log.d("MAPAS", "Erro: ${e.toString()}")
+        }
     }
 
     override fun locationOn() {
