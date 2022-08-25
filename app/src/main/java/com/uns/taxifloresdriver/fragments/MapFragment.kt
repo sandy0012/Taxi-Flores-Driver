@@ -1,4 +1,4 @@
-package com.uns.taxifloresdriver.activities
+package com.uns.taxifloresdriver.fragments
 
 import android.content.pm.PackageManager
 import android.content.res.Resources
@@ -10,11 +10,14 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.example.easywaylocation.EasyWayLocation
 import com.example.easywaylocation.Listener
 import com.google.android.gms.location.LocationRequest
@@ -25,14 +28,16 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.uns.taxifloresdriver.R
-import com.uns.taxifloresdriver.databinding.ActivityMapBinding
+import com.uns.taxifloresdriver.databinding.FragmentMapBinding
 import com.uns.taxifloresdriver.providers.AuthProvider
 import com.uns.taxifloresdriver.providers.GeoProvider
 
 
-class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
+class MapFragment : Fragment(), OnMapReadyCallback, Listener {
 
-    private lateinit var binding : ActivityMapBinding
+    private var _binding: FragmentMapBinding? = null
+    private val binding get() = _binding!!
+
     private var googleMap: GoogleMap? = null
     private var easyWayLocation: EasyWayLocation? = null
     private var myLocationLatLng: LatLng? = null
@@ -40,15 +45,22 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
     private val geoProvider= GeoProvider()
     private val authProvider= AuthProvider()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityMapBinding.inflate(layoutInflater)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentMapBinding.inflate(inflater, container, false)
 
-        setContentView(binding.root)
-        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+        mapFragment!!.getMapAsync(this)
 
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val locationRequest = LocationRequest.create().apply{
             interval = 0
@@ -57,7 +69,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
             smallestDisplacement = 1f
         }
 
-        easyWayLocation = EasyWayLocation(this, locationRequest, false, false, this)
+        easyWayLocation = EasyWayLocation(context, locationRequest, false, false, this)
 
         locationPermissions.launch(arrayOf(
             android.Manifest.permission.ACCESS_FINE_LOCATION,
@@ -146,7 +158,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
     }
 
     private fun addMarker(){
-        val drawable = ContextCompat.getDrawable(applicationContext,R.drawable.car)
+        val drawable = ContextCompat.getDrawable(requireContext(),R.drawable.car)
         val markerIcon = getMarkerFromDrawable(drawable!!)
         if(markerDriver != null){
             markerDriver?.remove()
@@ -198,10 +210,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
         //easyWayLocation?.startLocation();
 
         if (ActivityCompat.checkSelfPermission(
-                this,
+                requireContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
+                requireContext(),
                 android.Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
@@ -212,7 +224,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
 
         try {
             val success = googleMap?.setMapStyle(
-                MapStyleOptions.loadRawResourceStyle(this, R.raw.style)
+                MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.style)
             )
             if (!success!!) {
                 Log.d("MAPAS", "No se pudo encontrar el estilo")

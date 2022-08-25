@@ -1,32 +1,52 @@
-package com.uns.taxifloresdriver.activities
+package com.uns.taxifloresdriver.fragments
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
-import com.uns.taxifloresdriver.databinding.ActivityRegisterBinding
-import com.uns.taxifloresdriver.models.Client
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.uns.taxifloresdriver.MainActivity
+import com.uns.taxifloresdriver.R
+import com.uns.taxifloresdriver.databinding.FragmentRegisterBinding
 import com.uns.taxifloresdriver.models.Driver
 import com.uns.taxifloresdriver.providers.AuthProvider
-import com.uns.taxifloresdriver.providers.ClientProvider
 import com.uns.taxifloresdriver.providers.DriverProvider
 
-class RegisterActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityRegisterBinding
+class RegisterFragment : Fragment() {
+    private var _binding: FragmentRegisterBinding? = null
+
+    private val binding get() = _binding!!
+
     private val authProvider = AuthProvider()
     private val driverProvider = DriverProvider()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentRegisterBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        binding= ActivityRegisterBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        binding.btnGoToLogin.setOnClickListener {goToLogin()}
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.btnLogin.setOnClickListener { goToLogin() }
 
         binding.btnRegister.setOnClickListener{ register() }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun register(){
@@ -49,16 +69,16 @@ class RegisterActivity : AppCompatActivity() {
                     )
                     driverProvider.create(driver).addOnCompleteListener{
                         if(it.isSuccessful){
-                            Toast.makeText(this@RegisterActivity,"Registro exitoso",Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context,"Registro exitoso",Toast.LENGTH_SHORT).show()
                             goToMap()
                         }else{
-                            Toast.makeText(this@RegisterActivity,"Hubo un error Almacenando los datos del usuario ${it.exception.toString()}",Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context,"Hubo un error Almacenando los datos del usuario ${it.exception.toString()}",Toast.LENGTH_SHORT).show()
                             Log.d("FIREBASE", "error: ${it.exception.toString()}")
                         }
                     }
 
                 }else{
-                    Toast.makeText(this@RegisterActivity, "Registro fallido ${it.exception.toString()}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "Registro fallido ${it.exception.toString()}", Toast.LENGTH_LONG).show()
                     Log.d("FIREBASE","ERROR: ${it.exception.toString()}")
                 }
             }
@@ -67,9 +87,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private  fun goToMap(){
-        val i = Intent(this,MapActivity::class.java)
-        i.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(i)
+        findNavController().navigate(R.id.action_register_to_map)
     }
 
     private fun isValidForm(
@@ -111,11 +129,10 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun notification(message: String){
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun goToLogin(){
-        val i = Intent(this, MainActivity::class.java)
-        startActivity(i)
+        findNavController().navigate(R.id.action_register_to_login)
     }
 }
