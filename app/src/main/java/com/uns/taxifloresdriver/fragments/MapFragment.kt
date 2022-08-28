@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -49,6 +50,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
     private val geoProvider= GeoProvider()
     private val authProvider= AuthProvider()
     private val bookingProvider= BookingProvider()
+    private val modalBooking = ModalBottomSheetBooking()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,7 +83,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
             android.Manifest.permission.ACCESS_FINE_LOCATION,
             android.Manifest.permission.ACCESS_COARSE_LOCATION
         ))
-
+        listenerBooking()
         binding.bntConnect.setOnClickListener{ connectDriver() }
         binding.bntDisconnect.setOnClickListener{ disconnectDriver() }
 
@@ -107,6 +110,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
         }
     }
 
+    private fun showModalBooking(){
+        modalBooking.show(childFragmentManager,ModalBottomSheetBooking.TAG)
+    }
 
     private fun listenerBooking(){
         bookingListener = bookingProvider.getBooking().addSnapshotListener{ snapshot, e ->
@@ -115,11 +121,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
                 return@addSnapshotListener
             }
 
-
             if (snapshot != null){
                 if (snapshot.documents.size > 0) {
                     val booking = snapshot.documents[0].toObject(Booking::class.java)
-                    Log.d("FIRESTORE", "DATA: ${booking?.toJson()}")
+                    showModalBooking()
                 }
             }
         }
