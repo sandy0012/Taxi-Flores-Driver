@@ -27,14 +27,18 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.firebase.firestore.ListenerRegistration
 import com.uns.taxifloresdriver.R
 import com.uns.taxifloresdriver.databinding.FragmentMapBinding
+import com.uns.taxifloresdriver.models.Booking
 import com.uns.taxifloresdriver.providers.AuthProvider
+import com.uns.taxifloresdriver.providers.BookingProvider
 import com.uns.taxifloresdriver.providers.GeoProvider
 
 
 class MapFragment : Fragment(), OnMapReadyCallback, Listener {
 
+    private var bookingListener: ListenerRegistration? =null
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
 
@@ -44,6 +48,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
     private var markerDriver: Marker? = null
     private val geoProvider= GeoProvider()
     private val authProvider= AuthProvider()
+    private val bookingProvider= BookingProvider()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -103,9 +108,26 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
     }
 
 
+    private fun listenerBooking(){
+        bookingListener = bookingProvider.getBooking().addSnapshotListener{ snapshot, e ->
+            if (e != null){
+                Log.d("FIRESTORE","ERROR: ${e.message}")
+                return@addSnapshotListener
+            }
+
+
+            if (snapshot != null){
+                if (snapshot.documents.size > 0) {
+                    val booking = snapshot.documents[0].toObject(Booking::class.java)
+                    Log.d("FIRESTORE", "DATA: ${booking?.toJson()}")
+                }
+            }
+        }
+    }
+
     private fun checkIfDriverIsConnected(){
         geoProvider.getLocation(authProvider.getId()).addOnSuccessListener {
-            document ->
+                document ->
             if(document.exists()){
                 if(document.contains("l")){
                     connectDriver()
@@ -201,6 +223,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
     override fun onDestroy() {//CUANDO CERRAMOS LA APP O PASAMOS A OTRA ACTIVYTI
         super.onDestroy()
         easyWayLocation?.endUpdates();
+        bookingListener?.remove()
     }
 
 
@@ -246,8 +269,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
 
         googleMap?.moveCamera(
             CameraUpdateFactory.newCameraPosition(
-            CameraPosition.builder().target(myLocationLatLng!!).zoom(17f).build()
-        ))
+                CameraPosition.builder().target(myLocationLatLng!!).zoom(17f).build()
+            ))
 
         addMarker()
         saveLocation()
