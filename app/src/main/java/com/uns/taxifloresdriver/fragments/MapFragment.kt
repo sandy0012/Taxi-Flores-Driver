@@ -122,7 +122,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
         }
     }
 
-    private fun showModalBooking(){
+    private fun showModalBooking(booking: Booking){
+        val bundle = Bundle()
+        bundle.putString("booking",booking.toJson())
+        modalBooking.arguments = bundle
         modalBooking.show(childFragmentManager,ModalBottomSheetBooking.TAG)
         timer.start()
     }
@@ -137,7 +140,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
             if (snapshot != null){
                 if (snapshot.documents.size > 0) {
                     val booking = snapshot.documents[0].toObject(Booking::class.java)
-                    showModalBooking()
+                    showModalBooking(booking!!)
                 }
             }
         }
