@@ -1,5 +1,6 @@
 package com.uns.taxifloresdriver.fragments
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.uns.taxifloresdriver.R
 import com.uns.taxifloresdriver.models.Booking
@@ -26,6 +28,7 @@ class ModalBottomSheetBooking: BottomSheetDialogFragment() {
     private val bookingProvider = BookingProvider()
     private val geoProvider = GeoProvider()
     private val authProvider = AuthProvider()
+    private lateinit var booking: Booking
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,7 +45,7 @@ class ModalBottomSheetBooking: BottomSheetDialogFragment() {
         btnCancel= view.findViewById(R.id.bntCancel)
 
         val data = arguments?.getString("booking")
-        val booking = Booking.fromJson(data!!)
+        booking = Booking.fromJson(data!!)!!
         Log.d("ARGUMENTS", "booking: ${booking?.toJson()}")
 
         textViewOrigin.text = booking?.origin
@@ -58,9 +61,14 @@ class ModalBottomSheetBooking: BottomSheetDialogFragment() {
     private fun cancelBooking(idClient: String){
         bookingProvider.updateStatus(idClient,"cancel").addOnCompleteListener{
             if (it.isSuccessful){
-                Toast.makeText(context, "viaje Cancelado", Toast.LENGTH_SHORT).show()
+                dismiss()
+                if (context != null) {
+                    Toast.makeText(context, "viaje Cancelado", Toast.LENGTH_SHORT).show()
+                }
             }else{
-                Toast.makeText(context, "no de pudo cancelar", Toast.LENGTH_SHORT).show()
+                if (context != null) {
+                    Toast.makeText(context, "no de pudo cancelar", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -70,14 +78,29 @@ class ModalBottomSheetBooking: BottomSheetDialogFragment() {
             if (it.isSuccessful){
                 MapFragment().easyWayLocation?.endUpdates()
                 geoProvider.removeLocation(authProvider.getId())
-                Toast.makeText(context, "viaje aceptado", Toast.LENGTH_SHORT).show()
+                goToMapTrip()
+
             }else{
-                Toast.makeText(context, "no de pudo cancelar", Toast.LENGTH_SHORT).show()
+                if (context != null) {
+                    Toast.makeText(context, "no de pudo cancelar", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
 
+
+    private fun goToMapTrip(){
+        findNavController().navigate(R.id.action_map_to_mapTripFragment)
+    }
+
     companion object{
         const val TAG = "ModalBottomSheet"
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if (booking.id != null){
+            cancelBooking(booking.idClient!!)
+        }
     }
 }
