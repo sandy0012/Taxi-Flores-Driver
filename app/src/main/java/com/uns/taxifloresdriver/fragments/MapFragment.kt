@@ -7,14 +7,12 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -45,7 +43,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
     private val binding get() = _binding!!
 
     private var googleMap: GoogleMap? = null
-    private var easyWayLocation: EasyWayLocation? = null
+    var easyWayLocation: EasyWayLocation? = null
     private var myLocationLatLng: LatLng? = null
     private var markerDriver: Marker? = null
     private val geoProvider= GeoProvider()
@@ -140,7 +138,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
             if (snapshot != null){
                 if (snapshot.documents.size > 0) {
                     val booking = snapshot.documents[0].toObject(Booking::class.java)
-                    showModalBooking(booking!!)
+                    if (booking?.status == "create"){
+                        showModalBooking(booking)
+                    }
                 }
             }
         }

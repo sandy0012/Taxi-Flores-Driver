@@ -7,6 +7,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.uns.taxifloresdriver.models.Booking
 
+const val STATUS = "status"
+
 class BookingProvider {
     val db = Firebase.firestore.collection("Bookings")
     val authProvider = AuthProvider()
@@ -19,5 +21,10 @@ class BookingProvider {
 
     fun getBooking(): Query {
         return db.whereEqualTo("idDriver",authProvider.getId())
+    }
+    fun updateStatus(idClient: String, status: String): Task<Void>{
+        return db.document(idClient).update(STATUS, status).addOnFailureListener{
+            Log.d("FIRESTORE", "Error: ${it.message}")
+        }
     }
 }

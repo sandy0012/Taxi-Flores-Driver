@@ -7,9 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.uns.taxifloresdriver.R
 import com.uns.taxifloresdriver.models.Booking
+import com.uns.taxifloresdriver.providers.AuthProvider
+import com.uns.taxifloresdriver.providers.BookingProvider
+import com.uns.taxifloresdriver.providers.GeoProvider
 
 class ModalBottomSheetBooking: BottomSheetDialogFragment() {
 
@@ -19,12 +23,17 @@ class ModalBottomSheetBooking: BottomSheetDialogFragment() {
     private lateinit var btnAccept: Button
     private lateinit var btnCancel: Button
 
+    private val bookingProvider = BookingProvider()
+    private val geoProvider = GeoProvider()
+    private val authProvider = AuthProvider()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View{
         val view = inflater.inflate(R.layout.modal_bottom_sheet_booking,container,false)
+
 
         textViewOrigin = view.findViewById(R.id.textViewOrigin)
         textViewDestination = view.findViewById(R.id.textViewDestination)
@@ -39,7 +48,33 @@ class ModalBottomSheetBooking: BottomSheetDialogFragment() {
         textViewOrigin.text = booking?.origin
         textViewDestination.text = booking?.destination
         textViewTimeAndDistance.text = "${booking?.time} Min - ${booking?.km} Km"
+
+        btnAccept.setOnClickListener{acceptBooking(booking?.idClient!!)}
+        btnCancel.setOnClickListener{cancelBooking(booking?.idClient!!)}
+
         return view
+    }
+
+    private fun cancelBooking(idClient: String){
+        bookingProvider.updateStatus(idClient,"cancel").addOnCompleteListener{
+            if (it.isSuccessful){
+                Toast.makeText(context, "viaje Cancelado", Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(context, "no de pudo cancelar", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun acceptBooking(idClient: String){
+        bookingProvider.updateStatus(idClient,"cancel").addOnCompleteListener{
+            if (it.isSuccessful){
+                MapFragment().easyWayLocation?.endUpdates()
+                geoProvider.removeLocation(authProvider.getId())
+                Toast.makeText(context, "viaje aceptado", Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(context, "no de pudo cancelar", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     companion object{
