@@ -9,6 +9,7 @@ import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.text.method.TextKeyListener.clear
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -40,6 +41,10 @@ import com.uns.taxifloresdriver.providers.GeoProvider
 
 class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.DirectionCallBack {
 
+    private var markerDestination: Marker? = null
+    private var originLatLng: LatLng? = null
+    private var destinationLatLng: LatLng? = null
+    private var booking: Booking? = null
     private var markerOrigin: Marker? = null
     private var bookingListener: ListenerRegistration? =null
     private var _binding: FragmentMapTripBinding? = null
@@ -59,7 +64,7 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
     private lateinit var directionUtil : DirectionUtil
 
     private var isLocationEnabled = false
-
+    private var isCloseToOrigin = false
 
     val timer = object : CountDownTimer(20000,1000){
         override fun onTick(counter: Long) {
@@ -103,6 +108,9 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
             android.Manifest.permission.ACCESS_FINE_LOCATION,
             android.Manifest.permission.ACCESS_COARSE_LOCATION
         ))
+
+        binding.bntStartTrip.setOnClickListener { updateToStarted() }
+        binding.bntFinishTrip.setOnClickListener { updateToFinish() }
 //        binding.bntConnect.setOnClickListener{ connectDriver() }
 //        binding.bntDisconnect.setOnClickListener{ disconnectDriver() }
 
@@ -127,14 +135,32 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
         }
     }
 
+
+    private fun getDistanceBetween(originLatLng: LatLng, destinationLatLng: LatLng): Float{
+        var distance = 0.0f
+        val originLocation = Location("")
+        val destinationLocation = Location("")
+
+        originLocation.latitude=originLatLng.latitude
+        originLocation.longitude=originLatLng.longitude
+
+        destinationLocation.latitude=destinationLatLng.latitude
+        destinationLocation.longitude=destinationLatLng.longitude
+
+        distance = originLocation.distanceTo(destinationLocation)
+        return distance
+
+    }
+
     private fun getBooking(){
         bookingProvider.getBooking().get().addOnSuccessListener { query ->
             if (query != null){
                 if (query.size()>0){
                     val booking = query.documents[0].toObject(Booking::class.java)
-                    val originLatLng = LatLng(booking?.originLat!!,booking.originLng!!)
-                    easyDrawRoute(originLatLng)
-                    addOriginMarker(originLatLng)
+                    originLatLng = LatLng(booking?.originLat!!,booking?.originLng!!)
+                    destinationLatLng = LatLng(booking?.destinationLat!!,booking?.destinationLng!!)
+                    easyDrawRoute(originLatLng!!)
+                    addOriginMarker(originLatLng!!)
                 }
             }
 
@@ -147,6 +173,12 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
             .icon(BitmapDescriptorFactory.fromResource(R.drawable.icons_location_person)))
     }
 
+    private fun addDestinationMarker(){
+        if (destinationLatLng != null){
+            markerDestination=googleMap?.addMarker(MarkerOptions().position(destinationLatLng!!).title("Recoger aqui!")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.icons_pin24)))
+        }
+    }
 
     private fun easyDrawRoute(position: LatLng){
 
@@ -278,6 +310,37 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
         }
     }
 
+
+    private fun updateToStarted(){
+        if (isCloseToOrigin){
+            bookingProvider.updateStatus(booking?.idClient!!, "started").addOnCompleteListener{
+                if (it.isSuccessful){
+                    if (destinationLatLng != null){
+                        googleMap?.clear()
+                        addMarker()
+                        easyDrawRoute(destinationLatLng!!)
+                        markerOrigin?.remove()
+                        addDestinationMarker()
+                    }
+                    showButtonFinish()
+                }
+            }
+        }
+        else{
+            Toast.makeText(context, "Debes estar más cerca a la posición de recogida", Toast.LENGTH_LONG).show()
+        }
+    }
+
+
+    private fun updateToFinish(){
+        bookingProvider.updateStatus(booking?.idClient!!,"finished").addOnCompleteListener{
+            if (it.isSuccessful){
+                fragmentManager?.beginTransaction()?.replace(R.id.fragment_content_main,MapFragment())?.commit()
+            }
+        }
+
+    }
+
     override fun locationOn() {
 
     }
@@ -298,6 +361,15 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
 
         addMarker()
         saveLocation()
+
+        if (booking != null && originLatLng != null){
+            var distance = getDistanceBetween(myLocationLatLng!!,originLatLng!!)
+            if (distance <= 300){
+                isCloseToOrigin = true
+            }
+            Log.d("LOCATION", "Distance: ${distance}")
+        }
+
         if (!isLocationEnabled){
             isLocationEnabled = true
             getBooking()
