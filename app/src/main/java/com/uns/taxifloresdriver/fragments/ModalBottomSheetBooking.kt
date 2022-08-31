@@ -59,22 +59,16 @@ class ModalBottomSheetBooking: BottomSheetDialogFragment() {
     }
 
     private fun cancelBooking(idClient: String){
+
         bookingProvider.updateStatus(idClient,"cancel").addOnCompleteListener{
-            if (it.isSuccessful){
-                dismiss()
-                if (context != null) {
-                    Toast.makeText(context, "viaje Cancelado", Toast.LENGTH_SHORT).show()
-                }
-            }else{
-                if (context != null) {
-                    Toast.makeText(context, "no de pudo cancelar", Toast.LENGTH_SHORT).show()
-                }
-            }
+            MapFragment()?.timer?.cancel()
+            dismiss()
         }
     }
 
     private fun acceptBooking(idClient: String){
-        bookingProvider.updateStatus(idClient,"cancel").addOnCompleteListener{
+        bookingProvider.updateStatus(idClient,"accept").addOnCompleteListener{
+            MapFragment()?.timer?.cancel()
             if (it.isSuccessful){
                 MapFragment().easyWayLocation?.endUpdates()
                 geoProvider.removeLocation(authProvider.getId())
@@ -99,8 +93,9 @@ class ModalBottomSheetBooking: BottomSheetDialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        if (booking.id != null){
+        MapFragment()?.timer?.cancel()
+        /*if (booking.id != null){
             cancelBooking(booking.idClient!!)
-        }
+        }*/
     }
 }

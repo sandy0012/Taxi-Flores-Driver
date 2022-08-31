@@ -51,7 +51,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
     private val bookingProvider= BookingProvider()
     private val modalBooking = ModalBottomSheetBooking()
 
-    private val timer = object : CountDownTimer(20000,1000){
+    val timer = object : CountDownTimer(20000,1000){
         override fun onTick(counter: Long) {
            Log.d("TIMER","Counter: $counter")
         }
@@ -124,6 +124,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
         val bundle = Bundle()
         bundle.putString("booking",booking.toJson())
         modalBooking.arguments = bundle
+        modalBooking.isCancelable = false
         modalBooking.show(childFragmentManager,ModalBottomSheetBooking.TAG)
         timer.start()
     }

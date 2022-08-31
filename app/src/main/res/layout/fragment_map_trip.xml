@@ -1,17 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.MapTripFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <fragment
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.google.android.gms.maps.SupportMapFragment"/>
+
+    <Button
+        android:id="@+id/bntStartTrip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="MapTripFragment"
-        android:layout_gravity="center"
-        android:textAlignment="center"/>
+        android:text="INICIAR VIAJE"
+        android:background="@drawable/rounded_button"
+        android:textColor="@color/white"
+        android:layout_gravity="bottom"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="50dp"
 
+        />
+    <Button
+        android:id="@+id/bntFinishTrip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="FINALIZAR VIAJE"
+        android:background="@drawable/rounded_button"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/gray"
+        android:layout_gravity="bottom"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="50dp"
+        android:visibility="gone"
+        />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
