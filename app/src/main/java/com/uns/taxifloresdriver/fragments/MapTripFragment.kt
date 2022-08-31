@@ -143,7 +143,7 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
 
 
     private fun addOriginMarker(position: LatLng){
-        markerOrigin=googleMap?.addMarker(MarkerOptions().position(position).title("Mi posicion")
+        markerOrigin=googleMap?.addMarker(MarkerOptions().position(position).title("Recoger aqui!")
             .icon(BitmapDescriptorFactory.fromResource(R.drawable.icons_location_person)))
     }
 
