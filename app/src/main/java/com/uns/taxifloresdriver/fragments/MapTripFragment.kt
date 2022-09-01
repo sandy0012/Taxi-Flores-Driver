@@ -7,7 +7,6 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.*
-import android.text.method.TextKeyListener.clear
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +17,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.example.easywaylocation.EasyWayLocation
 import com.example.easywaylocation.Listener
 import com.example.easywaylocation.draw_path.DirectionUtil
@@ -34,11 +32,9 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.uns.taxifloresdriver.R
 import com.uns.taxifloresdriver.databinding.FragmentMapTripBinding
 import com.uns.taxifloresdriver.models.Booking
+import com.uns.taxifloresdriver.models.History
 import com.uns.taxifloresdriver.models.Prices
-import com.uns.taxifloresdriver.providers.AuthProvider
-import com.uns.taxifloresdriver.providers.BookingProvider
-import com.uns.taxifloresdriver.providers.ConfigProvider
-import com.uns.taxifloresdriver.providers.GeoProvider
+import com.uns.taxifloresdriver.providers.*
 
 
 class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.DirectionCallBack {
@@ -61,6 +57,7 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
     private val geoProvider= GeoProvider()
     private val authProvider= AuthProvider()
     private val bookingProvider= BookingProvider()
+    private val historyProvider= HistoryProvider()
     private val modalBooking = ModalBottomSheetBooking()
 
     private var wayPoints: ArrayList<LatLng> = ArrayList()
@@ -242,6 +239,30 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
 
     }
 
+
+    private fun createHistory(){
+        val history = History(
+            idDriver = authProvider.getId(),
+            idClient = booking?.idClient,
+            origin = booking?.origin,
+            destination = booking?.destination,
+            originLat = booking?.originLat,
+            originLng = booking?.originLng,
+            destinationLat = booking?.destinationLat,
+            destinationLng = booking?.destinationLng,
+            time = min,
+            km = km,
+            price = totalPrice
+        )
+        historyProvider.create(history).addOnCompleteListener{
+            if (it.isSuccessful){
+                goToCalificationClient()
+            }
+        }
+    }
+
+
+
     private fun getPrices(distance : Double, time : Double){
         configProvider.getPrices().addOnSuccessListener { document ->
             if (document.exists()){
@@ -252,7 +273,7 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
                 totalPrice =totalDistance + totalTime
                 totalPrice = if (totalPrice < 5.0) prices.minValue!! else totalPrice
 
-                goToCalificationClient()
+                    createHistory()
             }
         }
     }
