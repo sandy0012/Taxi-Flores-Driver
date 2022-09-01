@@ -156,7 +156,7 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
         bookingProvider.getBooking().get().addOnSuccessListener { query ->
             if (query != null){
                 if (query.size()>0){
-                    val booking = query.documents[0].toObject(Booking::class.java)
+                    booking = query.documents[0].toObject(Booking::class.java)
                     originLatLng = LatLng(booking?.originLat!!,booking?.originLng!!)
                     destinationLatLng = LatLng(booking?.destinationLat!!,booking?.destinationLng!!)
                     easyDrawRoute(originLatLng!!)
@@ -364,7 +364,8 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
 
         if (booking != null && originLatLng != null){
             var distance = getDistanceBetween(myLocationLatLng!!,originLatLng!!)
-            if (distance <= 300){
+            Log.d("DISTANCE","DISTANCE: $distance")
+            if (distance <= 3000){
                 isCloseToOrigin = true
             }
             Log.d("LOCATION", "Distance: ${distance}")
