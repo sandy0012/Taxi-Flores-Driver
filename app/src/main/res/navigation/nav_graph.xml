@@ -48,5 +48,17 @@
         android:id="@+id/mapTripFragment"
         android:name="com.uns.taxifloresdriver.fragments.MapTripFragment"
         android:label="fragment_map_trip"
-        tools:layout="@layout/fragment_map_trip" />
+        tools:layout="@layout/fragment_map_trip" >
+        <action
+            android:id="@+id/action_mapTripFragment_to_map"
+            app:destination="@id/map" />
+        <action
+            android:id="@+id/action_mapTripFragment_to_calificationClientFragment"
+            app:destination="@id/calificationClientFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/calificationClientFragment"
+        android:name="com.uns.taxifloresdriver.fragments.CalificationClientFragment"
+        android:label="fragment_calification_client"
+        tools:layout="@layout/fragment_calification_client" />
 </navigation>

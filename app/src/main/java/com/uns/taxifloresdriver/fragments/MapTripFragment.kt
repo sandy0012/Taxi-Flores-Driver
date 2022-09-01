@@ -17,6 +17,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.easywaylocation.EasyWayLocation
 import com.example.easywaylocation.Listener
 import com.example.easywaylocation.draw_path.DirectionUtil
@@ -32,13 +34,17 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.uns.taxifloresdriver.R
 import com.uns.taxifloresdriver.databinding.FragmentMapTripBinding
 import com.uns.taxifloresdriver.models.Booking
+import com.uns.taxifloresdriver.models.Prices
 import com.uns.taxifloresdriver.providers.AuthProvider
 import com.uns.taxifloresdriver.providers.BookingProvider
+import com.uns.taxifloresdriver.providers.ConfigProvider
 import com.uns.taxifloresdriver.providers.GeoProvider
 
 
 class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.DirectionCallBack {
 
+    private var totalPrice = 0.0
+    private val configProvider = ConfigProvider()
     private var markerDestination: Marker? = null
     private var originLatLng: LatLng? = null
     private var destinationLatLng: LatLng? = null
@@ -78,18 +84,16 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
         kotlin.run {
             counter++
 
+            if (min == 0){
+                binding.textViewTimer.text = "$counter Seg"
+            }else{
+                binding.textViewTimer.text = "$min Min $counter Seg"
+            }
+
             if (counter == 60){
                 min = min+(counter/60)
                 counter = 0
-
-                if (min == 0){
-                    binding.textViewTimer.text = "$counter Seg"
-                }
-                else{
-
-                    binding.textViewTimer.text = "$min Min $counter Seg"
-                }
-
+                binding.textViewTimer.text = "$min Min $counter Seg"
             }
 
             startTimer()
@@ -238,6 +242,21 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
 
     }
 
+    private fun getPrices(distance : Double, time : Double){
+        configProvider.getPrices().addOnSuccessListener { document ->
+            if (document.exists()){
+                val prices = document.toObject(Prices::class.java) //DOCUMENTO CON LA INFORMACION
+                val totalDistance = distance * prices?.km!!
+                val totalTime = time * prices.min!!
+
+                totalPrice =totalDistance + totalTime
+                totalPrice = if (totalPrice < 5.0) prices.minValue!! else totalPrice
+
+                goToCalificationClient()
+            }
+        }
+    }
+
 
     private fun showModalBooking(booking: Booking){
         val bundle = Bundle()
@@ -376,10 +395,18 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
             if (it.isSuccessful){
                 handler.removeCallbacks(runnable)
                 isStartedTrip = false
-                fragmentManager?.beginTransaction()?.replace(R.id.fragment_content_main,MapFragment())?.commit()
+                easyWayLocation?.endUpdates()
+                geoProvider.removeLocationWorking(authProvider.getId())
+                getPrices(km,min.toDouble())
             }
         }
 
+    }
+
+    private fun goToCalificationClient(){
+        val bundle = Bundle()
+        bundle.putDouble("price",totalPrice)
+        view?.findNavController()?.navigate(R.id.action_mapTripFragment_to_calificationClientFragment,bundle)
     }
 
     override fun locationOn() {
