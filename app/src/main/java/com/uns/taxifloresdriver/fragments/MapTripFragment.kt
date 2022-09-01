@@ -6,9 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.location.Location
-import android.os.Build
-import android.os.Bundle
-import android.os.CountDownTimer
+import android.os.*
 import android.text.method.TextKeyListener.clear
 import android.util.Log
 import android.view.LayoutInflater
@@ -65,6 +63,39 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
 
     private var isLocationEnabled = false
     private var isCloseToOrigin = false
+    //DISTANCIA
+    private var meters = 0.0
+    private var km = 0.0
+    private var currentLocation = Location("")
+    private var previusLocation = Location("")
+    private var isStartedTrip = false
+
+    //TIEMPO
+    private var counter = 0
+    private var min = 0
+    private var handler = Handler(Looper.myLooper()!!)
+    private var runnable = Runnable{
+        kotlin.run {
+            counter++
+
+            if (counter == 60){
+                min = min+(counter/60)
+                counter = 0
+
+                if (min == 0){
+                    binding.textViewTimer.text = "$counter Seg"
+                }
+                else{
+
+                    binding.textViewTimer.text = "$min Min $counter Seg"
+                }
+
+            }
+
+            startTimer()
+        }
+    }
+
 
     val timer = object : CountDownTimer(20000,1000){
         override fun onTick(counter: Long) {
@@ -133,6 +164,11 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
                 }
             }
         }
+    }
+
+
+    private fun startTimer(){
+        handler.postDelayed(runnable, 1000)
     }
 
 
@@ -276,6 +312,7 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
         if (myLocationLatLng != null){
             easyWayLocation?.endUpdates();
         }
+        handler.removeCallbacks(runnable)
 
     }
 
@@ -316,11 +353,13 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
             bookingProvider.updateStatus(booking?.idClient!!, "started").addOnCompleteListener{
                 if (it.isSuccessful){
                     if (destinationLatLng != null){
+                        isStartedTrip = true
                         googleMap?.clear()
                         addMarker()
                         easyDrawRoute(destinationLatLng!!)
                         markerOrigin?.remove()
                         addDestinationMarker()
+                        startTimer()
                     }
                     showButtonFinish()
                 }
@@ -335,6 +374,8 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
     private fun updateToFinish(){
         bookingProvider.updateStatus(booking?.idClient!!,"finished").addOnCompleteListener{
             if (it.isSuccessful){
+                handler.removeCallbacks(runnable)
+                isStartedTrip = false
                 fragmentManager?.beginTransaction()?.replace(R.id.fragment_content_main,MapFragment())?.commit()
             }
         }
@@ -352,9 +393,16 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
         myLocationLatLng = LatLng(location.latitude, location.longitude)
         //latitud y longitud de la posicion actual
 
+        currentLocation = location
 
-        googleMap?.moveCamera(
-            CameraUpdateFactory.newCameraPosition(
+        if (isStartedTrip){
+            meters = meters + previusLocation.distanceTo(currentLocation)
+            km = meters/1000
+            binding.textViewDistance.text= "${String.format("%.1f",km)} Km"
+        }
+        previusLocation = location
+
+        googleMap?.moveCamera(CameraUpdateFactory.newCameraPosition(
                 CameraPosition.builder().target(myLocationLatLng!!).zoom(17f).build()
             )
         )
