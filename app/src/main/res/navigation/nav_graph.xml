@@ -43,6 +43,9 @@
         <action
             android:id="@+id/action_map_to_mapTripFragment"
             app:destination="@id/mapTripFragment" />
+        <action
+            android:id="@+id/action_map_to_login"
+            app:destination="@id/login" />
     </fragment>
     <fragment
         android:id="@+id/mapTripFragment"
