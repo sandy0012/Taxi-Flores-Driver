@@ -13,13 +13,14 @@ data class History(
     val destination: String? = null,
     val calificationToCliente: Double? = null,
     val calificationToDriver: Double? = null,
-    val time: Int = null,
+    val time: Int? = null,
     val km: Double? = null,
     val originLat: Double? = null,
     val originLng: Double? = null,
     val destinationLat: Double? = null,
     val destinationLng: Double? = null,
     val price: Double? = null,
+    val timestamp: Long? = null,
 ) {
     public fun toJson() = klaxon.toJsonString(this)
 

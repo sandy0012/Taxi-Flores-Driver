@@ -35,6 +35,9 @@ import com.uns.taxifloresdriver.models.Booking
 import com.uns.taxifloresdriver.models.History
 import com.uns.taxifloresdriver.models.Prices
 import com.uns.taxifloresdriver.providers.*
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.DirectionCallBack {
@@ -252,11 +255,16 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
             destinationLng = booking?.destinationLng,
             time = min,
             km = km,
-            price = totalPrice
+            price = totalPrice,
+            timestamp = Date().time
         )
         historyProvider.create(history).addOnCompleteListener{
             if (it.isSuccessful){
-                goToCalificationClient()
+                bookingProvider.updateStatus(booking?.idClient!!,"finished").addOnCompleteListener{
+                    if (it.isSuccessful){
+                        goToCalificationClient()
+                    }
+                }
             }
         }
     }
@@ -273,7 +281,7 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
                 totalPrice =totalDistance + totalTime
                 totalPrice = if (totalPrice < 5.0) prices.minValue!! else totalPrice
 
-                    createHistory()
+                createHistory()
             }
         }
     }
@@ -412,15 +420,16 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
 
 
     private fun updateToFinish(){
-        bookingProvider.updateStatus(booking?.idClient!!,"finished").addOnCompleteListener{
-            if (it.isSuccessful){
-                handler.removeCallbacks(runnable)
-                isStartedTrip = false
-                easyWayLocation?.endUpdates()
-                geoProvider.removeLocationWorking(authProvider.getId())
-                getPrices(km,min.toDouble())
-            }
+        handler.removeCallbacks(runnable)
+        isStartedTrip = false
+        easyWayLocation?.endUpdates()
+        geoProvider.removeLocationWorking(authProvider.getId())
+
+        if (min ==0 ){
+            min = 1
         }
+        getPrices(km,min.toDouble())
+
 
     }
 
