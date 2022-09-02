@@ -27,6 +27,7 @@ class ModalBottomSheetMenu: BottomSheetDialogFragment() {
 
     var textViewUserName : TextView? = null
     var linearLayoutLogout : LinearLayout? = null
+    var linearLayoutProfile : LinearLayout? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,18 +37,33 @@ class ModalBottomSheetMenu: BottomSheetDialogFragment() {
         val view = inflater.inflate(R.layout.modal_bottom_sheet_menu,container,false)
         textViewUserName = view.findViewById(R.id.textViewUserName)
         linearLayoutLogout = view.findViewById(R.id.linearLayoutLogout)
+        linearLayoutProfile = view.findViewById(R.id.linearLayoutProfile)
 
         getDriver()
         linearLayoutLogout?.setOnClickListener{goToMain()}
+        linearLayoutProfile?.setOnClickListener { goMapToProfile() }
 
         return view
     }
 
 
+    private fun goProfileToMap(){
+        findNavController().navigate(R.id.action_profileFragment_to_map)
+    }
+
+    private fun goMapToProfile(){
+        findNavController().navigate(R.id.action_map_to_profileFragment)
+    }
+
     private fun goToMain(){
         authProvider.logout()
         findNavController().navigate(R.id.action_map_to_login)
 
+    }
+
+    public fun goProfileToLogin(){
+        authProvider.logout()
+        findNavController().navigate(R.id.action_profileFragment_to_login)
     }
 
     private fun getDriver(){

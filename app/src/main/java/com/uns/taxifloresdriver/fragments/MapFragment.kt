@@ -98,7 +98,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
         binding.bntConnect.setOnClickListener{ connectDriver() }
         binding.bntDisconnect.setOnClickListener{ disconnectDriver() }
         binding.imageViewMenu.setOnClickListener { showModalMenu() }
-
     }
 
     val locationPermissions =registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){
