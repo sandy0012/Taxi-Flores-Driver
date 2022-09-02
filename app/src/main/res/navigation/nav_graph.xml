@@ -60,5 +60,9 @@
         android:id="@+id/calificationClientFragment"
         android:name="com.uns.taxifloresdriver.fragments.CalificationClientFragment"
         android:label="fragment_calification_client"
-        tools:layout="@layout/fragment_calification_client" />
+        tools:layout="@layout/fragment_calification_client" >
+        <action
+            android:id="@+id/action_calificationClientFragment_to_map"
+            app:destination="@id/map" />
+    </fragment>
 </navigation>

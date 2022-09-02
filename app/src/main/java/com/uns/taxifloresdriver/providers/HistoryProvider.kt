@@ -27,9 +27,9 @@ class HistoryProvider {
     fun getBooking(): Query {
         return db.whereEqualTo("idDriver",authProvider.getId())
     }
-    fun updateStatus(idClient: String, status: String): Task<Void>{
-        return db.document(idClient).update("status", status).addOnFailureListener{
-            Log.d("FIRESTORE", "Error: ${it.message}")
+    fun updateCalificationToClient(id : String, calification: Float): Task<Void>{
+        return db.document(id).update("calificacionToClient", calification).addOnFailureListener { e->
+            Log.d("FIRESTORE", "calification: ${e.message}")
         }
     }
 }
