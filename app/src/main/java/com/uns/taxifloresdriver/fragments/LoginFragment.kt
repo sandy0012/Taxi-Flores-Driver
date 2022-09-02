@@ -40,6 +40,7 @@ class LoginFragment : Fragment() {
         if(isValidForm(email,password)){
             authProvider.login(email,password).addOnCompleteListener{
                 if (it.isSuccessful){
+                    Log.d("FIREBASE","ERROR: ${authProvider.getId()}")
                     goToMap()
                 }else{
                     Toast.makeText(context, "Error al ingresar", Toast.LENGTH_SHORT).show()

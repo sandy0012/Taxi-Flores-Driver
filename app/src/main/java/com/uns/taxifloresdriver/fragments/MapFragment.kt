@@ -50,6 +50,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
     private val authProvider= AuthProvider()
     private val bookingProvider= BookingProvider()
     private val modalBooking = ModalBottomSheetBooking()
+    private val modalMenu = ModalBottomSheetMenu()
 
     val timer = object : CountDownTimer(20000,1000){
         override fun onTick(counter: Long) {
@@ -96,6 +97,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
         listenerBooking()
         binding.bntConnect.setOnClickListener{ connectDriver() }
         binding.bntDisconnect.setOnClickListener{ disconnectDriver() }
+        binding.imageViewMenu.setOnClickListener { showModalMenu() }
 
     }
 
@@ -119,6 +121,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
             }
         }
     }
+
+
+    private fun showModalMenu(){
+        modalMenu.show(childFragmentManager,ModalBottomSheetMenu.TAG)
+    }
+
 
     private fun showModalBooking(booking: Booking){
         val bundle = Bundle()
