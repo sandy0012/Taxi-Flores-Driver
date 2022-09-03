@@ -82,13 +82,23 @@
         <action
             android:id="@+id/action_profileFragment_to_map"
             app:destination="@id/map" />
-        <action
-            android:id="@+id/action_profileFragment_to_login"
-            app:destination="@id/login" />
     </fragment>
     <fragment
         android:id="@+id/historiesFragment"
         android:name="com.uns.taxifloresdriver.fragments.HistoriesFragment"
         android:label="fragment_histories"
-        tools:layout="@layout/fragment_histories" />
+        tools:layout="@layout/fragment_histories" >
+        <action
+            android:id="@+id/action_historiesFragment_to_historyDetailFragment"
+            app:destination="@id/historyDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/historyDetailFragment"
+        android:name="com.uns.taxifloresdriver.fragments.HistoryDetailFragment"
+        android:label="fragment_history_detail"
+        tools:layout="@layout/fragment_history_detail" >
+        <action
+            android:id="@+id/action_historyDetailFragment_to_historiesFragment"
+            app:destination="@id/historiesFragment" />
+    </fragment>
 </navigation>

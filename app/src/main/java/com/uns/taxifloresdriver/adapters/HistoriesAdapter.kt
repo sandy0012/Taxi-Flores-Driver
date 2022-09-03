@@ -1,16 +1,20 @@
 package com.uns.taxifloresdriver.adapters
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.uns.taxifloresdriver.R
 import com.uns.taxifloresdriver.models.History
 import com.uns.taxifloresdriver.utils.RelativeTime
 
-class HistoriesAdapter(val histories: ArrayList<History>):RecyclerView.Adapter<HistoriesAdapter.HistoriesAdapterViewHolder>() {
+class HistoriesAdapter(val context : Fragment, val histories: ArrayList<History>):RecyclerView.Adapter<HistoriesAdapter.HistoriesAdapterViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoriesAdapterViewHolder {
@@ -25,8 +29,16 @@ class HistoriesAdapter(val histories: ArrayList<History>):RecyclerView.Adapter<H
         if (history.timestamp != null){
             holder.textViewDate.text = RelativeTime.getTimeAgo(history.timestamp!!)
         }
+        holder.itemView.setOnClickListener{goToDetail(history?.id!!)}
 
     }
+
+    private fun goToDetail(idHistory: String){
+        val bundle = Bundle()
+        bundle.putString("id", idHistory)
+        context.findNavController().navigate(R.id.action_historiesFragment_to_historyDetailFragment,bundle)
+    }
+
     //TAMAÑO DE LA LISTA
     override fun getItemCount(): Int {
         return histories.size

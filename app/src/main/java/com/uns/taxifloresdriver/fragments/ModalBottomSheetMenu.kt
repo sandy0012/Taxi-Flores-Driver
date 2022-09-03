@@ -68,10 +68,7 @@ class ModalBottomSheetMenu: BottomSheetDialogFragment() {
 
     }
 
-    public fun goProfileToLogin(){
-        authProvider.logout()
-        findNavController().navigate(R.id.action_profileFragment_to_login)
-    }
+
 
     private fun getDriver(){
         driverProvider.getDriver(authProvider.getId()).addOnSuccessListener { document ->
