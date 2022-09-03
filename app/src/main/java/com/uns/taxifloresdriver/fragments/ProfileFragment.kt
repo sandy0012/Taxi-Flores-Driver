@@ -1,17 +1,22 @@
 package com.uns.taxifloresdriver.fragments
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.fragment.findNavController
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.uns.taxifloresdriver.R
 import com.uns.taxifloresdriver.databinding.FragmentProfileBinding
 import com.uns.taxifloresdriver.models.Driver
 import com.uns.taxifloresdriver.providers.AuthProvider
 import com.uns.taxifloresdriver.providers.DriverProvider
+import java.io.File
 
 
 class ProfileFragment : Fragment() {
@@ -22,6 +27,8 @@ class ProfileFragment : Fragment() {
 
     private var _binding : FragmentProfileBinding? = null
     private val binding get() = _binding!!
+    
+    private var imageFile : File? = null
 
 
     override fun onCreateView(
@@ -33,6 +40,7 @@ class ProfileFragment : Fragment() {
         getDriver()
         binding.imageViewBack.setOnClickListener { showModalMenu()}
         binding.btnUpdate.setOnClickListener { updateInfo()}
+        binding.circleImageProfile.setOnClickListener { selectImage() }
 
         return binding.root
     }
@@ -81,6 +89,34 @@ class ProfileFragment : Fragment() {
                 binding.textFieldPlateCar.setText(driver?.plateNumber)
             }
         }
+    }
+
+    private val startImageForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result : ActivityResult ->
+
+        val resultCode = result.resultCode
+        val data = result.data
+
+        if (resultCode == Activity.RESULT_OK){
+            val fileUri = data?.data
+            imageFile = File(fileUri?.path)
+            binding.circleImageProfile.setImageURI(fileUri)
+        }
+        else if(resultCode == ImagePicker.RESULT_ERROR){
+            Toast.makeText(context, ImagePicker.getError(data), Toast.LENGTH_LONG).show()
+        }
+        else{
+            Toast.makeText(context,"Tarea Cancelada", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun selectImage(){
+        ImagePicker.with(this)
+            .crop()
+            .compress(1024)
+            .maxResultSize(1080,1080)
+            .createIntent { intent ->
+                    startImageForResult.launch(intent)
+            }
     }
 
 
