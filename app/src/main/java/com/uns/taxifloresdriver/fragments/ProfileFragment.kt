@@ -2,6 +2,7 @@ package com.uns.taxifloresdriver.fragments
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -67,6 +68,22 @@ class ProfileFragment : Fragment() {
             plateNumber = carPlate
         )
 
+        if (imageFile != null){
+            driverProvider.uploadImage(authProvider.getId(),imageFile!!).addOnSuccessListener{ taskSnapshot ->
+                driverProvider.getImageUrl().addOnSuccessListener { url ->
+                    val imageUrl = url.toString()
+                    driver.image = imageUrl
+                    update(driver)
+                    Log.d("STORAGE", "URL: ${imageUrl}")
+                }
+            }
+        }else{
+            update(driver)
+        }
+
+    }
+
+    private fun update(driver: Driver){
         driverProvider.update(driver).addOnCompleteListener{
             if (it.isSuccessful){
                 Toast.makeText(context, "Datos Actualizados", Toast.LENGTH_SHORT).show()
