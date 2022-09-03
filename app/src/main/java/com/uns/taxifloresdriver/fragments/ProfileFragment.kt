@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.uns.taxifloresdriver.R
 import com.uns.taxifloresdriver.databinding.FragmentProfileBinding
@@ -28,16 +29,43 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
-        return binding.root
 
         getDriver()
         binding.imageViewBack.setOnClickListener { showModalMenu()}
+        binding.btnUpdate.setOnClickListener { updateInfo()}
 
-
+        return binding.root
     }
 
     private fun showModalMenu(){
         findNavController().navigate(R.id.action_profileFragment_to_map)
+    }
+
+    private fun updateInfo(){
+        val name = binding.textFieldName.text.toString()
+        val lastName = binding.textFieldLastName.text.toString()
+        val phone = binding.textFieldPhone.text.toString()
+        val carBrand = binding.textFieldBrandCar.text.toString()
+        val carColor =  binding.textFieldColorCar.text.toString()
+        val carPlate = binding.textFieldPlateCar.text.toString()
+
+        val driver = Driver(
+            id = authProvider.getId(),
+            name = name,
+            lastName = lastName,
+            phone = phone,
+            colorCar = carColor,
+            brandCar = carBrand,
+            plateNumber = carPlate
+        )
+
+        driverProvider.update(driver).addOnCompleteListener{
+            if (it.isSuccessful){
+                Toast.makeText(context, "Datos Actualizados", Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(context, "No se pudo actualizar", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun getDriver(){
