@@ -10,7 +10,7 @@ import com.uns.taxifloresdriver.R
 import com.uns.taxifloresdriver.models.History
 import com.uns.taxifloresdriver.utils.RelativeTime
 
-class HistoriesAdapter(val context: Fragment, val histories: ArrayList<History>):RecyclerView.Adapter<HistoriesAdapter.HistoriesAdapterViewHolder>() {
+class HistoriesAdapter(val histories: ArrayList<History>):RecyclerView.Adapter<HistoriesAdapter.HistoriesAdapterViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoriesAdapterViewHolder {
@@ -21,9 +21,9 @@ class HistoriesAdapter(val context: Fragment, val histories: ArrayList<History>)
     override fun onBindViewHolder(holder: HistoriesAdapterViewHolder, position: Int) {
         val history = histories[position]
         holder.textViewOrigin.text = history.origin
-        holder.textViewDestination.text = history.origin
+        holder.textViewDestination.text = history.destination
         if (history.timestamp != null){
-            holder.textViewDate.text = RelativeTime.getTimeAgo(history.timestamp!!, context)
+            holder.textViewDate.text = RelativeTime.getTimeAgo(history.timestamp!!)
         }
 
     }

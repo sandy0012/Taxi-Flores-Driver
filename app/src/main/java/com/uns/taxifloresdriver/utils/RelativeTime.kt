@@ -13,7 +13,7 @@ object RelativeTime : Application() {
     private const val HOUR_MILLIS = 60 * MINUTE_MILLIS
     private const val DAY_MILLIS = 24 * HOUR_MILLIS
 
-    fun getTimeAgo(time: Long, ctx: Fragment): String {
+    fun getTimeAgo(time: Long): String {
         var time = time
         if (time < 1000000000000L) {
             // if timestamp given in seconds, convert to millis
@@ -43,7 +43,7 @@ object RelativeTime : Application() {
         }
     }
 
-    fun timeFormatAMPM(time: Long, ctx: Context?): String {
+    fun timeFormatAMPM(time: Long): String {
         var time = time
         val formatter = SimpleDateFormat("hh:mm a")
         if (time < 1000000000000L) {

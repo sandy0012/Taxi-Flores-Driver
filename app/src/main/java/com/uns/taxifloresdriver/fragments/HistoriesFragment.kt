@@ -45,7 +45,7 @@ class HistoriesFragment : Fragment() {
                         histories.add(history!!)
                     }
 
-                    adapter = HistoriesAdapter(activity.context,histories)
+                    adapter = HistoriesAdapter(histories)
                     binding.recyclerViewHistories.adapter = adapter
                 }
             }
