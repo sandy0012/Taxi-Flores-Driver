@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.uns.taxifloresdriver.R
 import com.uns.taxifloresdriver.databinding.FragmentProfileBinding
@@ -104,6 +105,12 @@ class ProfileFragment : Fragment() {
                 binding.textFieldBrandCar.setText(driver?.brandCar)
                 binding.textFieldColorCar.setText(driver?.colorCar)
                 binding.textFieldPlateCar.setText(driver?.plateNumber)
+
+                if (driver?.image != null){
+                    if (driver.image != ""){
+                        Glide.with(requireContext()).load(driver.image).into(binding.circleImageProfile)
+                    }
+                }
             }
         }
     }
