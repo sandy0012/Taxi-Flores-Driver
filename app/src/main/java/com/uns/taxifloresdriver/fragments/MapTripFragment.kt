@@ -76,6 +76,9 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
     private var previusLocation = Location("")
     private var isStartedTrip = false
 
+    //MODAL
+    private var modalTrip = ModalBottomSheetTripInfo()
+
     //TIEMPO
     private var counter = 0
     private var min = 0
@@ -145,7 +148,8 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
         ))
 
         binding.bntStartTrip.setOnClickListener { updateToStarted() }
-        binding.bntFinishTrip.setOnClickListener { updateToFinish() }
+        binding.bntFinishTrip.setOnClickListener { updateToFinish()}
+        binding.imageViewInfo.setOnClickListener { showModalInfo() }
 //        binding.bntConnect.setOnClickListener{ connectDriver() }
 //        binding.bntDisconnect.setOnClickListener{ disconnectDriver() }
 
@@ -170,6 +174,11 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
         }
     }
 
+
+
+    private fun showModalInfo(){
+        modalTrip.show(childFragmentManager, ModalBottomSheetTripInfo.TAG)
+    }
 
     private fun startTimer(){
         handler.postDelayed(runnable, 1000)
