@@ -104,17 +104,6 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
     }
 
 
-    val timer = object : CountDownTimer(20000,1000){
-        override fun onTick(counter: Long) {
-            Log.d("TIMER","Counter: $counter")
-        }
-
-        override fun onFinish() {
-            Log.d("TIMER","On Finish")
-        }
-
-    }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -177,7 +166,14 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
 
 
     private fun showModalInfo(){
-        modalTrip.show(childFragmentManager, ModalBottomSheetTripInfo.TAG)
+        if (booking != null) {
+            val bundle = Bundle()
+            bundle.putString("booking", booking?.toJson())
+            modalTrip.arguments = bundle
+            modalTrip.show(childFragmentManager, ModalBottomSheetTripInfo.TAG)
+        }else{
+            Toast.makeText(context, "no se pudo cargar la informacion", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun startTimer(){
@@ -294,19 +290,6 @@ class MapTripFragment : Fragment(), OnMapReadyCallback, Listener, DirectionUtil.
             }
         }
     }
-
-
-    private fun showModalBooking(booking: Booking){
-        val bundle = Bundle()
-        bundle.putString("booking",booking.toJson())
-        modalBooking.arguments = bundle
-        modalBooking.show(childFragmentManager,ModalBottomSheetBooking.TAG)
-        timer.start()
-    }
-
-
-
-
 
     private fun saveLocation(){
         if(myLocationLatLng != null){

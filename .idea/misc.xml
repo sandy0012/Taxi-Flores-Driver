@@ -9,13 +9,10 @@
         <entry key="..\:/APP_LAS_FLORES/App-Taxi-Flores-Driver/app/src/main/res/layout/cardview_history.xml" value="0.203125" />
         <entry key="..\:/APP_LAS_FLORES/App-Taxi-Flores-Driver/app/src/main/res/layout/fragment_calification_client.xml" value="0.20416666666666666" />
         <entry key="..\:/APP_LAS_FLORES/App-Taxi-Flores-Driver/app/src/main/res/layout/fragment_histories.xml" value="0.20416666666666666" />
-        <entry key="..\:/APP_LAS_FLORES/App-Taxi-Flores-Driver/app/src/main/res/layout/fragment_map.xml" value="0.12273550724637682" />
         <entry key="..\:/APP_LAS_FLORES/App-Taxi-Flores-Driver/app/src/main/res/layout/fragment_map_trip.xml" value="0.2" />
         <entry key="..\:/APP_LAS_FLORES/App-Taxi-Flores-Driver/app/src/main/res/layout/fragment_profile.xml" value="0.12273550724637682" />
         <entry key="..\:/APP_LAS_FLORES/App-Taxi-Flores-Driver/app/src/main/res/layout/fragment_register.xml" value="0.20416666666666666" />
         <entry key="..\:/APP_LAS_FLORES/App-Taxi-Flores-Driver/app/src/main/res/layout/modal_bottom_sheet_booking.xml" value="0.14221014492753623" />
-        <entry key="..\:/APP_LAS_FLORES/App-Taxi-Flores-Driver/app/src/main/res/layout/modal_bottom_sheet_menu.xml" value="0.20416666666666666" />
-        <entry key="..\:/APP_LAS_FLORES/App-Taxi-Flores-Driver/app/src/main/res/layout/modal_bottom_sheet_trip.xml" value="0.20416666666666666" />
         <entry key="..\:/APP_LAS_FLORES/App-Taxi-Flores-Driver/app/src/main/res/layout/toolbar.xml" value="0.203125" />
         <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/drawable-v24/rounded_button.xml" value="0.207" />
         <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/drawable-v24/rounded_textfield.xml" value="0.237" />
@@ -27,8 +24,11 @@
         <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/layout/activity_map.xml" value="0.19384057971014493" />
         <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/layout/border.xml" value="0.253125" />
+        <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/layout/cardview_history.xml" value="0.22418478260869565" />
         <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/layout/content_main.xml" value="0.23641304347826086" />
         <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/layout/fragment_calification_client.xml" value="0.2509057971014493" />
+        <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/layout/fragment_histories.xml" value="0.1" />
+        <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/layout/fragment_history_detail.xml" value="0.22418478260869565" />
         <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/layout/fragment_login.xml" value="0.23641304347826086" />
         <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/layout/fragment_map.xml" value="0.25416666666666665" />
         <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/layout/fragment_map_trip.xml" value="0.15572916666666667" />
@@ -36,6 +36,8 @@
         <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/layout/fragment_register.xml" value="0.22916666666666666" />
         <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/layout/modal_bottom_sheet_booking.xml" value="0.25" />
         <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/layout/modal_bottom_sheet_menu.xml" value="0.22056159420289856" />
+        <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/layout/modal_bottom_sheet_trip_info.xml" value="0.18385416666666668" />
+        <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/layout/toolbar.xml" value="0.25" />
         <entry key="..\:/cursos/Android/Taxi-Flores-Driver/app/src/main/res/menu/menu.xml" value="0.13728070175438598" />
       </map>
     </option>
