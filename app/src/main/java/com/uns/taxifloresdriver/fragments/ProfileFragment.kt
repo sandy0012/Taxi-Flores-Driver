@@ -23,6 +23,7 @@ import java.io.File
 
 class ProfileFragment : Fragment() {
 
+    private var afterImageProfile: String = ""
     val driverProvider = DriverProvider()
     val authProvider = AuthProvider()
     private val modalMenu = ModalBottomSheetMenu()
@@ -66,8 +67,10 @@ class ProfileFragment : Fragment() {
             phone = phone,
             colorCar = carColor,
             brandCar = carBrand,
-            plateNumber = carPlate
+            plateNumber = carPlate,
+            image = afterImageProfile
         )
+
 
         if (imageFile != null){
             driverProvider.uploadImage(authProvider.getId(),imageFile!!).addOnSuccessListener{ taskSnapshot ->
@@ -81,6 +84,7 @@ class ProfileFragment : Fragment() {
         }else{
             update(driver)
         }
+
 
     }
 
@@ -106,6 +110,7 @@ class ProfileFragment : Fragment() {
                 binding.textFieldColorCar.setText(driver?.colorCar)
                 binding.textFieldPlateCar.setText(driver?.plateNumber)
 
+                afterImageProfile = driver?.image!!
                 if (driver?.image != null){
                     if (driver.image != ""){
                         Glide.with(requireContext()).load(driver.image).into(binding.circleImageProfile)
@@ -122,7 +127,7 @@ class ProfileFragment : Fragment() {
 
         if (resultCode == Activity.RESULT_OK){
             val fileUri = data?.data
-            imageFile = File(fileUri?.path)
+            imageFile = File(fileUri?.path!!)
             binding.circleImageProfile.setImageURI(fileUri)
         }
         else if(resultCode == ImagePicker.RESULT_ERROR){
