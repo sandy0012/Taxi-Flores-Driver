@@ -29,10 +29,8 @@ class ModalBottomSheetTripInfo: BottomSheetDialogFragment() {
     var textViewClientName : TextView? = null
     var textViewOrigin : TextView? = null
     var textViewDestination : TextView? = null
-    var imageViewPhone : ImageView? = null
     var circleImageClient : CircleImageView? = null
 
-    val REQUEST_PHONE_CALL = 30
 
 
     override fun onCreateView(
@@ -45,7 +43,6 @@ class ModalBottomSheetTripInfo: BottomSheetDialogFragment() {
         textViewClientName = view.findViewById(R.id.textViewClientName)
         textViewOrigin = view.findViewById(R.id.textViewOrigin)
         textViewDestination = view.findViewById(R.id.textViewDestination)
-        imageViewPhone = view.findViewById(R.id.imageViewPhone)
         circleImageClient = view.findViewById(R.id.circleImageClient)
 
 
@@ -56,12 +53,10 @@ class ModalBottomSheetTripInfo: BottomSheetDialogFragment() {
         }
 
 
-       // getDriver()
+       getDriver()
 
         return view
     }
-
-
 
 
 
@@ -77,7 +72,7 @@ class ModalBottomSheetTripInfo: BottomSheetDialogFragment() {
                     }
                 }
 
-                // textViewUserName?.text = "${driver?.name} ${driver?.lastName}"
+                //textViewUserName?.text = "${driver?.name} ${driver?.lastName}"
             }
         }
     }

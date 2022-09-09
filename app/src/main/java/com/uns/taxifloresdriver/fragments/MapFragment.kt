@@ -129,6 +129,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
 
     private fun showModalBooking(booking: Booking){
         val bundle = Bundle()
+
         bundle.putString("booking",booking.toJson())
         modalBooking.arguments = bundle
         modalBooking.isCancelable = false
@@ -251,6 +252,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
 
     override fun onDestroy() {//CUANDO CERRAMOS LA APP O PASAMOS A OTRA ACTIVYTI
         super.onDestroy()
+        this.getArguments()?.clear();
         easyWayLocation?.endUpdates();
         bookingListener?.remove()
     }
@@ -269,7 +271,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, Listener {
                 android.Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-
             return
         }
         googleMap?.isMyLocationEnabled = false

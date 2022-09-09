@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.uns.taxifloresdriver.R
 import com.uns.taxifloresdriver.adapters.HistoriesAdapter
@@ -30,6 +31,7 @@ class HistoriesFragment : Fragment() {
         var linearLayoutManager = LinearLayoutManager(context)
         binding.recyclerViewHistories.layoutManager = linearLayoutManager
 
+        binding.imageViewBack.setOnClickListener{finish()}
 
         getHistories()
         return binding.root
@@ -54,6 +56,10 @@ class HistoriesFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun finish(){
+        findNavController().navigate(R.id.action_historiesFragment_to_map)
     }
 
 }

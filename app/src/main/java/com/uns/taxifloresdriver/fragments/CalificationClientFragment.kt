@@ -38,16 +38,18 @@ class CalificationClientFragment : Fragment() {
             extraPrice = bundle!!.getDouble("price", 0.0)
             binding.textViewPrice.text = "Precio: ${format(extraPrice)}"
 
-            binding.ratinBar.setOnRatingBarChangeListener { ratingBar, value, b ->
-                calification = value
-            }
+
             binding.btnCalfication.setOnClickListener{
                 if(history?.id != null){
+                    calification = binding.ratinBar.numStars.toFloat()
                     updateCalificationClient(history?.id!!)
                 }else{
                     Toast.makeText(context, "el id del historial es nulo", Toast.LENGTH_SHORT).show()
                 }
 
+            }
+            binding.ratinBar.setOnRatingBarChangeListener { ratingBar, value, b ->
+                calification = value
             }
             getHistory()
         }

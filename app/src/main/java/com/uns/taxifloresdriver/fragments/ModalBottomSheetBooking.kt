@@ -46,11 +46,13 @@ class ModalBottomSheetBooking: BottomSheetDialogFragment() {
 
         val data = arguments?.getString("booking")
         booking = Booking.fromJson(data!!)!!
+
+
         Log.d("ARGUMENTS", "booking: ${booking?.toJson()}")
 
         textViewOrigin.text = booking?.origin
         textViewDestination.text = booking?.destination
-        textViewTimeAndDistance.text = "${booking?.time} Min - ${booking?.km} Km"
+        textViewTimeAndDistance.text = "${String.format("%.1f",booking?.time)} Min - ${booking?.km} Km"
 
         btnAccept.setOnClickListener{acceptBooking(booking?.idClient!!)}
         btnCancel.setOnClickListener{cancelBooking(booking?.idClient!!)}
@@ -97,5 +99,14 @@ class ModalBottomSheetBooking: BottomSheetDialogFragment() {
         /*if (booking.id != null){
             cancelBooking(booking.idClient!!)
         }*/
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        this.arguments?.clear()
+    }
+
+    private fun format(value : Double): String{
+        return String.format("%.1f",value)
     }
 }

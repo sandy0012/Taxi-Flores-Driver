@@ -91,6 +91,9 @@
         <action
             android:id="@+id/action_historiesFragment_to_historyDetailFragment"
             app:destination="@id/historyDetailFragment" />
+        <action
+            android:id="@+id/action_historiesFragment_to_map"
+            app:destination="@id/map" />
     </fragment>
     <fragment
         android:id="@+id/historyDetailFragment"

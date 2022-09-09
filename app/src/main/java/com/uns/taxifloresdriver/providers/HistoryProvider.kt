@@ -37,7 +37,7 @@ class HistoryProvider {
         return db.whereEqualTo("idDriver",authProvider.getId())
     }
     fun updateCalificationToClient(id : String, calification: Float): Task<Void>{
-        return db.document(id).update("calificacionToClient", calification).addOnFailureListener { e->
+        return db.document(id).update("calificationToCliente", calification).addOnFailureListener { e->
             Log.d("FIRESTORE", "calification: ${e.message}")
         }
     }

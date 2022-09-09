@@ -30,7 +30,7 @@
             android:id="@+id/imageViewBack"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:src="@drawable/ic_person"
+            android:src="@drawable/ic_menu"
             android:layout_marginTop="30dp"
             android:layout_marginLeft="15dp"/>
 
@@ -238,7 +238,7 @@
             <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:src="@drawable/ic_person" />
+                android:src="@drawable/ic_check_green" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -316,7 +316,7 @@
             <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:src="@drawable/ic_menu" />
+                android:src="@drawable/ic_check_green" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
